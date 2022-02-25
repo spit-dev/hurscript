@@ -19,7 +19,17 @@ def error(code):
         print("Unexpected error! [0]")
         exit()
     elif code == 1:
-        print(f"[1] Error! Execute {Fore.YELLOW}{sys.argv[0]} --help{Fore.RESET}")
+        if NO_COLOR == False:
+            print(f"[1] Error! Execute {Fore.YELLOW}{sys.argv[0]} --help{Fore.RESET}")
+            exit()
+        else:
+            print(f"[1] Error! Execute --help")
+            exit()
+    elif code == 2:
+        print(f"[2] Error! Invalid input file")
+        exit()
+    elif code == 3:
+        print(f"[3] Error! Unaccesible input file")
         exit()
 
 #CLEAR SCREEN FUNCTION
@@ -31,9 +41,13 @@ if len(sys.argv) < 2:
     error(1)
 
 #DEFINE ARGUMENTS
-def define_arguments():
-    if "--no-color" in sys.argv or "-nc":
+if "--no-color" in sys.argv or "-nc" in sys.argv:
         NO_COLOR = True
+try:
+    inp_filename = sys.argv[int(sys.argv.index("-i"))+1]
+    print(inp_filename)
+except:
+    error(2)
 
 if NO_COLOR == False:
     init()
@@ -54,5 +68,28 @@ HURSCRIPT - SEMIAUTOMATIC HACKING SCRIPT
 {Fore.RED}-----------------------------------------{Fore.RESET}
 """)
 
+def loadfile():
+    print("[LOG] Reading...")
+    print(f"[LOG] Input filename: \"{inp_filename}\"")
+    try:
+        print("[LOG] Trying to open file...")
+        t_file = open(f"{inp_filename}", "rb")
+        t_file.close()
+        print("[LOG] File loaded correctly...")
+    except:
+        error(3)
+
+def fetchcommands():
+    try:
+        m_file = open(f"{inp_filename}", "r")
+        m_lines = m_file.readlines()
+        for n in range(len(m_lines)):
+            m_lines[n] = str(m_lines[n])[:-1]
+        print(m_lines)
+    except:
+        print()
+
 cls()
 banner()
+loadfile()
+fetchcommands()
