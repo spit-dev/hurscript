@@ -9,14 +9,14 @@ global NO_COLOR
 NO_COLOR = False
 
 #CUSTOM ERROR FUNCTION
-def error(code):
+def error(code, *line):
     if not int(code):
-        print("Bad error usage!")
+        print("[0] Unexpected error!")
         exit()
     else:
         code = int(code)
     if code == 0:
-        print("Unexpected error! [0]")
+        print("[0] Unexpected error!")
         exit()
     elif code == 1:
         if NO_COLOR == False:
@@ -30,6 +30,9 @@ def error(code):
         exit()
     elif code == 3:
         print(f"[3] Error! Unaccesible input file")
+        exit()
+    elif code == 4:
+        print(f"[4] Error! Multiple init; sentences found!")
         exit()
 
 #CLEAR SCREEN FUNCTION
@@ -83,11 +86,33 @@ def fetchcommands():
     try:
         m_file = open(f"{inp_filename}", "r")
         m_lines = m_file.readlines()
+        print("[LOG] READING FILE...\n----------------------")
         for n in range(len(m_lines)):
             m_lines[n] = str(m_lines[n])[:-1]
-        print(m_lines)
+            if NO_COLOR == False:
+                if str(m_lines[n]) == "init;" or str(m_lines[n]) == "end;":
+                    print(f"{Fore.RED}[{n+1}]{Fore.RESET} {str(m_lines[n])}")
+                else:
+                    print(f"{Fore.YELLOW}[{n+1}]{Fore.RESET} {str(m_lines[n])}")
+            else:
+                print(f"[{n+1}] {str(m_lines[n])}")
+        print("----------------------")
+        if m_lines.count("init;") > 1 or m_lines.count("end;") > 1:
+            error(4)
+        f_i = m_lines.index("init;")
+        f_e = m_lines.index("end;")+1
+        o_code = m_lines[f_i:f_e]
+        for n in range(len(o_code)):
+            if NO_COLOR == False:
+                if str(o_code[n]) == "init;" or str(o_code[n]) == "end;":
+                    print(f"{Fore.RED}[{n+1}]{Fore.RESET} {str(o_code[n])}")
+                else:
+                    print(f"{Fore.YELLOW}[{n+1}]{Fore.RESET} {str(o_code[n])}")
+            else:
+                print(f"[{n+1}] {str(o_code[n])}")
+        print("----------------------")
     except:
-        print()
+        error(0)
 
 cls()
 banner()
